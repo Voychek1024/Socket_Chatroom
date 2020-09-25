@@ -13,19 +13,42 @@ online_conn = list()
 user_conn = dict()
 
 
-def listen():
-    pass
+def check_user(user, key):
+    myWin.textBrowser.append(append_text("login[user:{},key{}]".format(user, key), "black"))
+    with open("server\\data\\user.txt", 'r', encoding='utf-8') as user_data:
+        lines = user_data.readlines()
+        for line in lines:
+            row = line.strip().split('\t')
+            _user = row[0]
+            _key = row[1]
+            if _user == user and _key == key:
+                return True
+        return False
 
 
-class Server:
-    def __init__(self):
-        print("Initializing server..")
-        self.sk = socket.socket()
-        self.sk.bind(('localhost', 18000))
-        self.sk.listen(5)
-        print("listening...")
-        Thread(target=listen).start()
-        # TODO: Threading problems
+def add_user(user, key):
+    try:
+        myWin.textBrowser.append(append_text("register[user:{},key:{}]".format(user, key), "black"))
+        with open("server\\data\\user.txt", 'r', encoding='utf-8') as user_data:
+            lines = user_data.readlines()
+            for line in lines:
+                _user = line.strip().split('\t')[0]
+                if _user == user:
+                    return "1"
+
+        with open("server\\data\\user.txt", 'a', encoding='utf-8') as user_data:
+            row = user + '\t' + key + '\n'
+            user_data.write(row)
+        return "0"
+    except Exception as e:
+        myWin.textBrowser.append(append_text("appending user data err: {}".format(str(e)), "black"))
+        return "2"
+
+
+def get_user_conn(_user):
+    for key, value in user_conn.items():
+        if _user == value:
+            return key
 
 
 def send_string_with_length(_conn, content):
@@ -59,60 +82,8 @@ def recv_all_string(_conn):
     return content
 
 
-def check_user(user, key):
-    print("login[user:{},key{}]".format(user, key))
-
-    with open("server\\data\\user.txt", 'r', encoding='utf-8') as user_data:
-        lines = user_data.readlines()
-        for line in lines:
-            row = line.strip().split('\t')
-            _user = row[0]
-            _key = row[1]
-            if _user == user and _key == key:
-                return True
-        return False
-
-
-def add_user(user, key):
-    try:
-        print("register[user:{},key:{}]".format(user, key))
-        with open("server\\data\\user.txt", 'r', encoding='utf-8') as user_data:
-            lines = user_data.readlines()
-            for line in lines:
-                _user = line.strip().split('\t')[0]
-                if _user == user:
-                    return "1"
-
-        with open("server\\data\\user.txt", 'a', encoding='utf-8') as user_data:
-            row = user + '\t' + key + '\n'
-            user_data.write(row)
-        return "0"
-    except Exception as e:
-        print("appending user data err: {}".format(str(e)))
-        return "2"
-
-
-def get_user_conn(_user):
-    for key, value in user_conn.items():
-        if _user == value:
-            return key
-
-
-def kick_user(user):
-    try:
-        _conn = get_user_conn(user).close()
-        user_conn.pop(_conn)
-        online_conn.remove(_conn)
-        handle_online_list(_conn)
-    except:
-        print("failed to kick user:{}".format(user))
-
-
 def handle_online_list(_conn):
-    print("online_conn.__len__()=" + str(online_conn.__len__()))
-    print("user_conn.__len__()=" + str(user_conn.__len__()))
-    print(online_conn)
-    print(user_conn)
+    myWin.update_online_list()
     for con in online_conn:
         send_string_with_length(con, "#!online_list#!")
         send_number(con, online_conn.__len__())
@@ -142,6 +113,16 @@ def handle_register(_conn):
     return True
 
 
+def kick_user(user):
+    try:
+        _conn = get_user_conn(user).close()
+        user_conn.pop(_conn)
+        online_conn.remove(_conn)
+        handle_online_list(_conn)
+    except Exception as e:
+        myWin.textBrowser.append(append_text("failed to kick user:{} due to:{}".format(user, str(e)), "black"))
+
+
 def handle_message(_conn):
     content = recv_all_string(_conn)
     for c in online_conn:
@@ -157,30 +138,48 @@ def handle(_conn, addr):
             _type = str(_conn.recv(1), "utf-8")
             _goon = True
             if _type == "1":
-                print("handling login..")
+                myWin.textBrowser.append(append_text("handling login..", "black"))
                 _goon = handle_login(_conn)
             elif _type == "2":
-                print("handling register..")
+                myWin.textBrowser.append(append_text("handling register..", "black"))
                 _goon = handle_register(_conn)
             elif _type == "3":
-                print("handling message..")
+                myWin.textBrowser.append(append_text("handling message..", "black"))
                 _goon = handle_message(_conn)
             elif _type == "4":
-                print("refreshing online list..")
+                myWin.textBrowser.append(append_text("refreshing online list..", "black"))
                 _goon = handle_online_list(_conn)
                 myWin.update_online_list()
             if not _goon:
                 break
     except Exception as e:
-        print(str(addr) + "conn shut down: " + str(e))
+        myWin.textBrowser.append(append_text("conn shut down due to:{}".format(str(e)), "black"))
     finally:
         try:
             _conn.close()
             online_conn.remove(_conn)
             user_conn.pop(_conn)
             handle_online_list(_conn)
-        except:
-            print(str(addr) + "conn err.")
+        except Exception as e:
+            myWin.textBrowser.append(append_text("conn shut down due to:{}".format(str(e)), "black"))
+
+
+class Server:
+    def __init__(self):
+        print("Initializing server..")
+        self.sk = socket.socket()
+        self.sk.bind(('localhost', 18000))
+        self.sk.listen(5)
+        print("listening...")
+        Thread(target=self.listen).start()
+
+    def listen(self):
+        try:
+            while True:
+                conn, addr = self.sk.accept()
+                Thread(target=handle, args=(conn, addr)).start()
+        except Exception as e:
+            print("server err:{}".format(str(e)))
 
 
 def append_text(_str, _color):
@@ -224,8 +223,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.listWidget.clear()
         self.listWidget.itemDoubleClicked.connect(self.kick_user)
 
+        self.server = Server()
+
     def initUI(self):
         self.setWindowTitle("TCP Chatroom server")
+        self.setWindowIcon(QtGui.QIcon("server_2.png"))
         self.show()
 
     def hid(self):
@@ -252,33 +254,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if reply == QMessageBox.Yes:
             self.listWidget.takeItem(self.listWidget.currentRow())
             # do kicking!
+            kick_user(item.text())
+            # TODO: need to send 'EoS'(End of Service) message to alert client of kicking, and then client do a
+            #  message popup so that it won't raise Exceptions.
 
     def update_online_list(self):
         self.listWidget.clear()
         for c in online_conn:
             _item = QListWidgetItem("{}".format(user_conn[c]))
-            print(user_conn[c])
             self.listWidget.addItem(_item)
 
 
-def Window_thread():
+if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setStyle('Oxygen')
-    global myWin
     myWin = MainWindow()
     myWin.show()
     sys.exit(app.exec_())
-
-
-if __name__ == '__main__':
-    try:
-        # Thread(target=Window_thread).start()
-        sk = socket.socket()
-        sk.bind(('localhost', 18000))
-        sk.listen(5)
-        print("listening...")
-        while True:
-            conn, addr = sk.accept()
-            Thread(target=handle, args=(conn, addr)).start()
-    except Exception as e:
-        print("server err: {}".format(str(e)))

@@ -20,7 +20,7 @@ class Ui_MainWindow(object):
         self.listWidget.setGeometry(QtCore.QRect(20, 70, 261, 411))
         font = QtGui.QFont()
         font.setFamily("Consolas")
-        font.setPointSize(16)
+        font.setPointSize(14)
         self.listWidget.setFont(font)
         self.listWidget.setObjectName("listWidget")
         item = QtWidgets.QListWidgetItem()
@@ -140,7 +140,7 @@ class Ui_MainWindow(object):
         __sortingEnabled = self.listWidget.isSortingEnabled()
         self.listWidget.setSortingEnabled(False)
         item = self.listWidget.item(0)
-        item.setText(_translate("MainWindow", "user"))
+        item.setText(_translate("MainWindow", "waiting for connection"))
         self.listWidget.setSortingEnabled(__sortingEnabled)
         self.label.setText(_translate("MainWindow", "Online User List"))
         self.label_2.setText(_translate("MainWindow", "2020.09.10(周二)\n"
@@ -158,9 +158,9 @@ class Ui_MainWindow(object):
         __sortingEnabled = self.tableWidget.isSortingEnabled()
         self.tableWidget.setSortingEnabled(False)
         item = self.tableWidget.item(0, 0)
-        item.setText(_translate("MainWindow", "1.jpg"))
+        item.setText(_translate("MainWindow", "No file"))
         item = self.tableWidget.item(0, 1)
-        item.setText(_translate("MainWindow", "1044k"))
+        item.setText(_translate("MainWindow", "N/A"))
         self.tableWidget.setSortingEnabled(__sortingEnabled)
         self.textBrowser.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
