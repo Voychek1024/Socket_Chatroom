@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="01">
+    <file>login_assist.png</file>
+    <file>err.png</file>
+  </qresource>
+</RCC>

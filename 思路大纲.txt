@@ -1,0 +1,27 @@
+server side
+online-user	list
+socket-user	dict
+threading
+
+send/recv string by length
+send/recv number
+recv all string
+
+check user -> read user.txt 
+add user, key
+
+handle online list
+
+handle login
+
+handle register
+
+handle message
+
+//kick
+
+//file receive (source, recv all str, target) + ack to source[0]
+
+//file send (send all string, target) + ack to source[1]
+
+//Qt side -> view list \ file usage \ kick
