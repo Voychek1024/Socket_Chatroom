@@ -43,6 +43,12 @@ class ChatClient:
         self.sk.sendall(bytes("3", "utf-8"))
         self.send_string_with_length(message)
 
+    def send_file(self, filename, binary):
+        self.sk.sendall(bytes("5", "utf-8"))
+        self.send_string_with_length(filename)
+        self.send_string_with_length(binary)
+        # TODO: new written file transfer pattern
+
     def send_string_with_length(self, content):
         self.sk.sendall(bytes(content, encoding='utf-8').__len__().to_bytes(4, byteorder='big'))
         self.sk.sendall(bytes(content, encoding='utf-8'))
@@ -223,6 +229,9 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                     else:
                         self.chatroom.textBrowser.append(append_text(_str, "blue"))
                         self.chatroom.textBrowser.append(append_text(content, "black"))
+                elif _type == "#!file_transfer#!":
+                    print("get file...")
+                    pass
             except Exception as e:
                 print("client error" + str(e))
                 # self.chatroom.close()
@@ -238,9 +247,10 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         home_dir = str(Path.home())
         f_name = QFileDialog.getOpenFileName(self, 'Open file', home_dir)
         print(f_name)
-        # TODO：Maybe we need another window to handle this func...
-        # TODO: Also we may need another func to append bubbles to textBrowser
         """
+        # TODO：Maybe we need another window to handle this func...
+        #  Also we may need another func to append bubbles to textBrowser
+        #  send_message(self, filename, content)
         pass
 
     def quit(self):

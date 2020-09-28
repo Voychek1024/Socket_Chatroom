@@ -150,6 +150,10 @@ def handle(_conn, addr):
                 myWin.textBrowser.append(append_text("refreshing online list..", "black"))
                 _goon = handle_online_list(_conn)
                 myWin.update_online_list()
+            elif _type == "5":
+                # TODO: get file from a_client, then push file to b_client, transfer filename, binary content
+                #  and how to get file size in Python?
+                pass
             if not _goon:
                 break
     except Exception as e:
