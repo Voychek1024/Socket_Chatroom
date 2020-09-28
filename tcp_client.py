@@ -2,11 +2,12 @@ import hashlib
 import math
 import socket
 import sys
+import time
 from threading import Thread
 from pathlib import Path
 
 from PyQt5.QtCore import QDateTime
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QLineEdit, QListWidgetItem, QFileDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QLineEdit, QListWidgetItem, QFileDialog, QMessageBox
 
 from chatroom import *
 from login import *
@@ -224,6 +225,12 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                         self.chatroom.textBrowser.append(append_text(content, "black"))
             except Exception as e:
                 print("client error" + str(e))
+                # self.chatroom.close()
+                if "WinError 10054" in str(e):
+                    time_stamp = get_time()
+                    self.chatroom.textBrowser.append(append_text("Service Alert\t" + time_stamp, "red"))
+                    self.chatroom.textBrowser.append(append_text("You've been kicked by server!", "black"))
+                    self.chatroom.lineEdit.setEnabled(False)
                 break
 
     def get_file(self):

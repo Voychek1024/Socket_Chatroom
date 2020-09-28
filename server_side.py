@@ -14,7 +14,7 @@ user_conn = dict()
 
 
 def check_user(user, key):
-    myWin.textBrowser.append(append_text("login[user:{},key{}]".format(user, key), "black"))
+    myWin.textBrowser.append(append_text("login[user:{},key:{}]".format(user, key), "black"))
     with open("server\\data\\user.txt", 'r', encoding='utf-8') as user_data:
         lines = user_data.readlines()
         for line in lines:
@@ -255,8 +255,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.listWidget.takeItem(self.listWidget.currentRow())
             # do kicking!
             kick_user(item.text())
-            # TODO: need to send 'EoS'(End of Service) message to alert client of kicking, and then client do a
-            #  message popup so that it won't raise Exceptions.
 
     def update_online_list(self):
         self.listWidget.clear()
