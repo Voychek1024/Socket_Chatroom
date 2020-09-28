@@ -132,6 +132,14 @@ def handle_message(_conn):
     return True
 
 
+def handle_file_input(_conn):
+    file_name = recv_all_string(_conn)
+    binary = recv_all_string(_conn)
+    with open('server\\files\\{}'.format(file_name), 'wb') as out_file:
+        out_file.write(bytes(binary, "utf-8"))
+    return True
+
+
 def handle(_conn, addr):
     try:
         while True:
@@ -153,7 +161,8 @@ def handle(_conn, addr):
             elif _type == "5":
                 # TODO: get file from a_client, then push file to b_client, transfer filename, binary content
                 #  and how to get file size in Python?
-                pass
+                myWin.textBrowser.append(append_text("handling file transfer..", "black"))
+                _goon = handle_file_input(_conn)
             if not _goon:
                 break
     except Exception as e:
@@ -219,7 +228,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.actionMinimize.triggered.connect(self.hid)
         self.actionQuit.triggered.connect(qApp.quit)
-
+        # TODO: qApp.quit is a bad func call, please replace with modified one.
         timer = QTimer(self)
         timer.timeout.connect(self.show_time)
         timer.start(200)

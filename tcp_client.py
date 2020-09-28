@@ -143,8 +143,8 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.chatroom.actionQuit.triggered.connect(self.quit)
         self.chatroom.pushButton.clicked.connect(self.send_message)
         self.chatroom.pushButton_2.clicked.connect(self.chatroom.lineEdit.clear)
-        self.chatroom.actionFile_Transfer.triggered.connect(self.get_file)
-
+        self.chatroom.actionFile_Transfer.triggered.connect(self.get_file())
+        # TODO: [DEBUG] program stop after single transfer
         # self.timer = QTimer(self)
         # self.timer.timeout.connect(self.recv_data)
 
@@ -248,10 +248,14 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         f_name = QFileDialog.getOpenFileName(self, 'Open file', home_dir)
         print(f_name)
         """
-        # TODO：Maybe we need another window to handle this func...
-        #  Also we may need another func to append bubbles to textBrowser
+        # TODO：we may need another func to append bubbles to textBrowser
         #  send_message(self, filename, content)
-        pass
+        f_name = QFileDialog.getOpenFileName(None, 'Open file')
+        if f_name[0]:
+            file_name = f_name[0].split("/")[-1]
+            with open(file_name, 'rb') as in_file:
+                binary = in_file.read()
+            self.client.send_file(file_name, binary.decode("utf-8"))
 
     def quit(self):
         print("disconnecting from socket...")
