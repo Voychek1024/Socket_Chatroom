@@ -91,7 +91,7 @@ p, li { white-space: pre-wrap; }
       <x>670</x>
       <y>470</y>
       <width>111</width>
-      <height>41</height>
+      <height>81</height>
      </rect>
     </property>
     <property name="font">
@@ -102,25 +102,6 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="text">
      <string>send</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_2">
-    <property name="geometry">
-     <rect>
-      <x>670</x>
-      <y>520</y>
-      <width>111</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Consolas</family>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>clear</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="lineEdit">
@@ -143,6 +124,12 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+    </property>
+    <property name="dragEnabled">
+     <bool>true</bool>
+    </property>
+    <property name="clearButtonEnabled">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">

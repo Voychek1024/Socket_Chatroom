@@ -221,7 +221,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         hide_action.triggered.connect(self.hid)
 
         """Need to fix bugs of tray remaining"""
-        quit_action.triggered.connect(qApp.quit)
+        quit_action.triggered.connect(self.quit)
         tray_menu = QMenu()
         tray_menu.addAction(show_action)
         tray_menu.addAction(hide_action)
@@ -232,8 +232,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.init_table()
 
         self.actionMinimize.triggered.connect(self.hid)
-        self.actionQuit.triggered.connect(qApp.quit)
-        # TODO: qApp.quit is a bad func call, please replace with modified one.
+        self.actionQuit.triggered.connect(self.quit)
         timer = QTimer(self)
         timer.timeout.connect(self.show_time)
         timer.start(200)
@@ -256,6 +255,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QSystemTrayIcon.Information,
             2000
         )
+
+    def quit(self):
+        self.server.sk.close()
+        self.close()
 
     def show_time(self):
         current_time = QDateTime.currentDateTime()

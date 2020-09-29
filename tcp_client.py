@@ -5,7 +5,7 @@ import sys
 from threading import Thread
 
 from PyQt5.QtCore import QDateTime
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QLineEdit, QListWidgetItem, QFileDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QLineEdit, QListWidgetItem
 
 from chatroom import *
 from login import *
@@ -107,6 +107,19 @@ class ChatRoom(QMainWindow, Ui_Window):
         self.show()
 
 
+"""
+class FileTransfer(QMainWindow, Ui):
+    def __init__(self, parent=None):
+        super(FileTransfer, self).__init__(parent)
+        self.setupUi(self)
+        self.initUi()
+
+    def initUi(self):
+        self.setWindowTitle("TCP File Transfer")
+        self.setWindowIcon(QtGui.QIcon("server_1.png"))
+"""
+
+
 def get_time():
     current_time = QDateTime.currentDateTime()
     label_time = current_time.toString("yyyy-MM-dd\thh:mm:ss")
@@ -136,12 +149,15 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.dialog_window = MyDialog(self)
         self.client = ChatClient()
         self.chatroom = ChatRoom(self)
+        self.chatroom.lineEdit.setAcceptDrops(True)
+
+
+        # self.file_choose = FileTransfer()
         self.initUI()
 
         self.chatroom.actionQuit.triggered.connect(self.quit)
         self.chatroom.pushButton.clicked.connect(self.send_message)
-        self.chatroom.pushButton_2.clicked.connect(self.chatroom.lineEdit.clear)
-        self.chatroom.actionFile_Transfer.triggered.connect(lambda: Thread(target=self.get_file).start())
+        self.chatroom.actionFile_Transfer.triggered.connect(self.get_file)
         # TODO: [DEBUG] program stop after single transfer
         # self.timer = QTimer(self)
         # self.timer.timeout.connect(self.recv_data)
@@ -241,19 +257,18 @@ class MyWindow(QMainWindow, Ui_MainWindow):
                 break
 
     def get_file(self):
-        """Get File Select Func Done...
-        home_dir = str(Path.home())
-        f_name = QFileDialog.getOpenFileName(self, 'Open file', home_dir)
-        print(f_name)
         """
-        # TODO：we may need another func to append bubbles to textBrowser
-        #  send_message(self, filename, content), file select need another window to prevent stop responding.
         f_name = QFileDialog.getOpenFileName(self, 'Open File')
         if f_name[0]:
             file_name = f_name[0].split("/")[-1]
             with open(file_name, 'rb') as in_file:
                 binary = in_file.read()
             self.client.send_file(file_name, binary.decode("utf-8"))
+        """
+        # TODO：we may need another func to append bubbles to textBrowser
+        #  QLineEdit drag and drop, isPath ? f_transfer : send_message
+        # self.file_choose.show()
+        pass
 
     def quit(self):
         print("disconnecting from socket...")
