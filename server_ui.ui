@@ -227,7 +227,7 @@
     </column>
     <column>
      <property name="text">
-      <string>size</string>
+      <string>size(bytes)</string>
      </property>
     </column>
     <item row="0" column="0">

@@ -154,7 +154,7 @@ class Ui_MainWindow(object):
         item = self.tableWidget.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "filename"))
         item = self.tableWidget.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "size"))
+        item.setText(_translate("MainWindow", "size(bytes)"))
         __sortingEnabled = self.tableWidget.isSortingEnabled()
         self.tableWidget.setSortingEnabled(False)
         item = self.tableWidget.item(0, 0)

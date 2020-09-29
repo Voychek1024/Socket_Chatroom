@@ -2,12 +2,10 @@ import hashlib
 import math
 import socket
 import sys
-import time
 from threading import Thread
-from pathlib import Path
 
 from PyQt5.QtCore import QDateTime
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QLineEdit, QListWidgetItem, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QLineEdit, QListWidgetItem, QFileDialog
 
 from chatroom import *
 from login import *
@@ -143,7 +141,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.chatroom.actionQuit.triggered.connect(self.quit)
         self.chatroom.pushButton.clicked.connect(self.send_message)
         self.chatroom.pushButton_2.clicked.connect(self.chatroom.lineEdit.clear)
-        self.chatroom.actionFile_Transfer.triggered.connect(self.get_file())
+        self.chatroom.actionFile_Transfer.triggered.connect(lambda: Thread(target=self.get_file).start())
         # TODO: [DEBUG] program stop after single transfer
         # self.timer = QTimer(self)
         # self.timer.timeout.connect(self.recv_data)
@@ -249,8 +247,8 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         print(f_name)
         """
         # TODO：we may need another func to append bubbles to textBrowser
-        #  send_message(self, filename, content)
-        f_name = QFileDialog.getOpenFileName(None, 'Open file')
+        #  send_message(self, filename, content), file select need another window to prevent stop responding.
+        f_name = QFileDialog.getOpenFileName(self, 'Open File')
         if f_name[0]:
             file_name = f_name[0].split("/")[-1]
             with open(file_name, 'rb') as in_file:

@@ -2,6 +2,9 @@ import sys
 import socket
 from threading import Thread
 import math
+from os import listdir
+from os.path import isfile, join
+from pathlib import Path
 
 from PyQt5.QtCore import QTimer, QTime, Qt, QDateTime
 from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QSystemTrayIcon, QMenu, QAction, QStyle, qApp, \
@@ -226,6 +229,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tray_icon.setContextMenu(tray_menu)
         self.tray_icon.show()
 
+        self.init_table()
+
         self.actionMinimize.triggered.connect(self.hid)
         self.actionQuit.triggered.connect(qApp.quit)
         # TODO: qApp.quit is a bad func call, please replace with modified one.
@@ -274,6 +279,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for c in online_conn:
             _item = QListWidgetItem("{}".format(user_conn[c]))
             self.listWidget.addItem(_item)
+
+    def init_table(self):
+        file_path = 'server\\files'
+        file = [f for f in listdir(file_path) if isfile(join(file_path, f))]
+        size = [Path(join(file_path, f)).stat().st_size for f in file]
+        if file:
+            self.tableWidget.removeRow(0)
+            # TODO: write another append Item func, for file_trans dynamic update
+            #  self.tableWidget.clear() is toxic to clear whole table
+            for i in range(len(file)):
+                self.tableWidget.insertRow(i)
+                self.tableWidget.setItem(i, 0, QTableWidgetItem("{}".format(file[i])))
+                self.tableWidget.setItem(i, 1, QTableWidgetItem("{}".format(size[i])))
 
 
 if __name__ == '__main__':
